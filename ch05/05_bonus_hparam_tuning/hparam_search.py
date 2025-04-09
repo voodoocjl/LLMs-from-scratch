@@ -8,7 +8,11 @@ import math
 import os
 import tiktoken
 import torch
-from previous_chapters import GPTModel, create_dataloader_v1
+
+# For llms_from_scratch installation instructions, see:
+# https://github.com/rasbt/LLMs-from-scratch/tree/main/pkg
+from llms_from_scratch.ch02 import create_dataloader_v1
+from llms_from_scratch.ch04 import GPTModel
 
 
 # Define a grid of hyperparameters to search over
@@ -53,8 +57,8 @@ def calc_loss_batch(input_batch, target_batch, model, device):
 def evaluate_model(model, train_loader, val_loader, device, eval_iter):
     model.eval()
     with torch.no_grad():
-        train_loss = calc_loss_loader(train_loader, model, device, num_iters=eval_iter)
-        val_loss = calc_loss_loader(val_loader, model, device, num_iters=eval_iter)
+        train_loss = calc_loss_loader(train_loader, model, device, num_batches=eval_iter)
+        val_loss = calc_loss_loader(val_loader, model, device, num_batches=eval_iter)
     model.train()
     return train_loss, val_loss
 
@@ -65,13 +69,13 @@ def train_model(model, train_loader, val_loader, optimizer, device,
                 initial_lr=3e-05, min_lr=1e-6):
     global_step = 0
 
-    max_lr = optimizer.defaults["lr"]
+    max_lr = optimizer.param_groups[0]["lr"]
 
     # Calculate total number of iterations
     total_training_iters = len(train_loader) * n_epochs
 
     # Calculate the learning rate increment at each step during warmup
-    lr_increment = (optimizer.defaults["lr"] - initial_lr) / warmup_iters
+    lr_increment = (optimizer.param_groups[0]["lr"] - initial_lr) / warmup_iters
 
     for epoch in range(n_epochs):
         model.train()
@@ -82,7 +86,7 @@ def train_model(model, train_loader, val_loader, optimizer, device,
             global_step += 1
 
             # Warmup: adjust learning rate linearly
-            if global_step < warmup_iters:
+            if global_step <= warmup_iters:
                 lr = initial_lr + global_step * lr_increment
             # Cosine annealing phase
             else:

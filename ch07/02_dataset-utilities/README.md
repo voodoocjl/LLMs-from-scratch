@@ -1,4 +1,4 @@
-# Chapter 7: Instruction and Preference Finetuning
+# Chapter 7: Finetuning to Follow Instructions
 
 This folder contains utility code that can be used for preparing an instruction dataset.
 
@@ -18,7 +18,7 @@ The `find-near-duplicates.py` function can be used to identify duplicates and ne
 
 
 
-```python
+```bash
 python find-near-duplicates.py --json_file instruction-examples.json
 ```
 

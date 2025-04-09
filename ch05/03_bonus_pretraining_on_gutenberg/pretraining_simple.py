@@ -17,14 +17,12 @@ from pathlib import Path
 import time
 import tiktoken
 import torch
-from previous_chapters import (
-    create_dataloader_v1,
-    GPTModel,
-    generate_and_print_sample,
-    calc_loss_batch,
-    evaluate_model,
-    plot_losses
-)
+
+# For llms_from_scratch installation instructions, see:
+# https://github.com/rasbt/LLMs-from-scratch/tree/main/pkg
+from llms_from_scratch.ch02 import create_dataloader_v1
+from llms_from_scratch.ch04 import GPTModel, generate_and_print_sample
+from llms_from_scratch.ch05 import calc_loss_batch, evaluate_model, plot_losses
 
 
 def read_text_file(file_path):
@@ -180,7 +178,7 @@ if __name__ == "__main__":
             "emb_dim": 12,           # Embedding dimension
             "n_heads": 2,            # Number of attention heads
             "n_layers": 2,           # Number of layers
-            "drop_rate": 0.0,        # Dropout rate
+            "drop_rate": 0.0,        # Dropout rate, deactivated via 0.0 as dropout in LLMs is not recommended anymore
             "qkv_bias": False        # Query-key-value bias
         }
 
